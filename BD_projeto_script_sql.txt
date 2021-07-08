@@ -1,0 +1,92 @@
+CREATE TABLE pessoa (
+	email	 VARCHAR(512),
+	nome	 VARCHAR(512),
+	password VARCHAR(512),
+	PRIMARY KEY(email)
+);
+
+CREATE TABLE admistrador (
+	id_adm	 BIGINT,
+	pessoa_email VARCHAR(512),
+	PRIMARY KEY(pessoa_email)
+);
+
+CREATE TABLE cliente (
+	id_clien	 BIGINT,
+	saldo	 FLOAT(8),
+	pessoa_email VARCHAR(512),
+	PRIMARY KEY(pessoa_email)
+);
+
+CREATE TABLE historico_arti (
+	novo_pre	 FLOAT(8),
+	preco_anti	 FLOAT(8),
+	data_alteracao TIMESTAMP,
+	artigo_id_arti BIGINT NOT NULL
+);
+
+CREATE TABLE mensagens (
+	id_mens			 BIGINT,
+	estado			 BOOL,
+	texto			 VARCHAR(512) NOT NULL,
+	admistrador_pessoa_email VARCHAR(512) NOT NULL,
+	PRIMARY KEY(id_mens)
+);
+
+CREATE TABLE artigo (
+	id_arti			 BIGINT,
+	nome			 VARCHAR(512) NOT NULL,
+	preco			 FLOAT(8) NOT NULL,
+	tempo_disp		 FLOAT(8),
+	descricao		 VARCHAR(512),
+	tipo			 VARCHAR(512) NOT NULL,
+	admistrador_pessoa_email VARCHAR(512) NOT NULL,
+	PRIMARY KEY(id_arti)
+);
+
+CREATE TABLE aluguer (
+	id_aluguer		 BIGINT,
+	nome		 VARCHAR(512) NOT NULL,
+	tipo		 VARCHAR(512),
+	preco		 FLOAT(8) NOT NULL,
+	expirado		 BOOL,
+	tempo_disp		 FLOAT(8),
+	tempo_final		 TIMESTAMP,
+	cliente_pessoa_email VARCHAR(512) NOT NULL,
+	artigo_id_arti	 BIGINT NOT NULL,
+	PRIMARY KEY(id_aluguer)
+);
+
+CREATE TABLE participante (
+	id_pess	 BIGINT,
+	funcao	 VARCHAR(512) NOT NULL,
+	nome		 VARCHAR(512) NOT NULL,
+	nacionalidade VARCHAR(512),
+	idade	 INTEGER,
+	PRIMARY KEY(id_pess)
+);
+
+CREATE TABLE artigo_participante (
+	artigo_id_arti	 BIGINT,
+	participante_id_pess BIGINT,
+	PRIMARY KEY(artigo_id_arti,participante_id_pess)
+);
+
+CREATE TABLE cliente_mensagens (
+	cliente_pessoa_email VARCHAR(512),
+	mensagens_id_mens	 BIGINT,
+	PRIMARY KEY(cliente_pessoa_email,mensagens_id_mens)
+);
+
+ALTER TABLE admistrador ADD CONSTRAINT admistrador_fk1 FOREIGN KEY (pessoa_email) REFERENCES pessoa(email);
+ALTER TABLE cliente ADD CONSTRAINT cliente_fk1 FOREIGN KEY (pessoa_email) REFERENCES pessoa(email);
+ALTER TABLE historico_arti ADD CONSTRAINT historico_arti_fk1 FOREIGN KEY (artigo_id_arti) REFERENCES artigo(id_arti);
+ALTER TABLE mensagens ADD CONSTRAINT mensagens_fk1 FOREIGN KEY (admistrador_pessoa_email) REFERENCES admistrador(pessoa_email);
+ALTER TABLE artigo ADD CONSTRAINT artigo_fk1 FOREIGN KEY (admistrador_pessoa_email) REFERENCES admistrador(pessoa_email);
+ALTER TABLE aluguer ADD CONSTRAINT aluguer_fk1 FOREIGN KEY (cliente_pessoa_email) REFERENCES cliente(pessoa_email);
+ALTER TABLE aluguer ADD CONSTRAINT aluguer_fk2 FOREIGN KEY (artigo_id_arti) REFERENCES artigo(id_arti);
+ALTER TABLE artigo_participante ADD CONSTRAINT artigo_participante_fk1 FOREIGN KEY (artigo_id_arti) REFERENCES artigo(id_arti);
+ALTER TABLE artigo_participante ADD CONSTRAINT artigo_participante_fk2 FOREIGN KEY (participante_id_pess) REFERENCES participante(id_pess);
+ALTER TABLE cliente_mensagens ADD CONSTRAINT cliente_mensagens_fk1 FOREIGN KEY (cliente_pessoa_email) REFERENCES cliente(pessoa_email);
+ALTER TABLE cliente_mensagens ADD CONSTRAINT cliente_mensagens_fk2 FOREIGN KEY (mensagens_id_mens) REFERENCES mensagens(id_mens);
+
